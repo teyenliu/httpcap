@@ -7,10 +7,10 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/cxfksword/httpcap/common"
-	"github.com/cxfksword/httpcap/config"
-	"github.com/cxfksword/httpcap/reader"
-	"github.com/cxfksword/httpcap/writer"
+	"httpcap/common"
+	"httpcap/config"
+	"httpcap/reader"
+	"httpcap/writer"
 )
 
 func startCapture() {
@@ -49,7 +49,7 @@ func CopyMulty(src reader.InputReader) (err error) {
 		nr, raw, er := src.Read(buf)
 		if nr > 0 && len(buf) > nr {
 			common.Debug("[DEBUG]", raw.SrcAddr, ":", raw.SrcPort, "->", raw.DestAddr, ":", raw.DestPort, "size:", nr)
-                        if config.Setting.Service == "memcache" {
+			if config.Setting.Service == "memcache" {
 				memcache.Write(buf[0:nr], int(raw.SrcPort), int(raw.DestPort), raw.SrcAddr, raw.DestAddr, raw.Seq)
 			} else {
 				if !(config.Setting.Service != "" && config.Setting.Service != "http") {

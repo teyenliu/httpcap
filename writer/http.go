@@ -17,9 +17,9 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/cxfksword/httpcap/color"
-	"github.com/cxfksword/httpcap/common"
-	"github.com/cxfksword/httpcap/config"
+	"httpcap/color"
+	"httpcap/common"
+	"httpcap/config"
 )
 
 type HttpOutput struct {

@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/cxfksword/httpcap/common"
+	"httpcap/common"
 
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"

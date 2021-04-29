@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/cxfksword/httpcap/color"
+	"httpcap/color"
 )
 
 type MemcacheOutput struct {

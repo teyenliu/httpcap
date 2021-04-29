@@ -4,9 +4,10 @@ import (
 	_ "fmt"
 	"os"
 
+	"httpcap/common"
+	"httpcap/config"
+
 	"github.com/urfave/cli"
-	"github.com/cxfksword/httpcap/common"
-	"github.com/cxfksword/httpcap/config"
 )
 
 func main() {

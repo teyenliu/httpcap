@@ -5,7 +5,8 @@ import (
 	_ "os"
 	"strconv"
 
-	"github.com/cxfksword/httpcap/common"
+	"httpcap/common"
+
 	"github.com/google/gopacket/layers"
 )
 

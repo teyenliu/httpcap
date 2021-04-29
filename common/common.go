@@ -6,7 +6,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/cxfksword/httpcap/config"
+	"httpcap/config"
 )
 
 type ByLength []string

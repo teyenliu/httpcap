@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/cxfksword/httpcap/config"
-	raw "github.com/cxfksword/httpcap/raw_socket_listener"
+	"httpcap/config"
+	raw "httpcap/raw_socket_listener"
 )
 
 type RAWInput struct {
@@ -77,7 +77,7 @@ func (i *RAWInput) Read(data []byte) (int, RAWData, error) {
 
 func (i *RAWInput) listen(host string, port string) {
 	host = strings.Replace(host, "[::]", "127.0.0.1", -1)
-
+	fmt.Println("[DEBUG] host:", host)
 	listener := raw.NewListener(host, port)
 
 	for {

@@ -1,6 +1,7 @@
 package raw_socket
 
 import (
+	"fmt"
 	_ "fmt"
 	"log"
 	"net"
@@ -16,6 +17,7 @@ func (t *Listener) readRAWSocket() {
 	// https://github.com/golang/go/issues/7653
 	// http://www.binarytides.com/packet-sniffer-code-in-c-using-linux-sockets-bsd-part-2/
 	proto := (syscall.ETH_P_ALL<<8)&0xff00 | syscall.ETH_P_ALL>>8 // change to Big-Endian order
+	fmt.Println("[DEBUG] proto: ", proto)
 	fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, proto)
 	if err != nil {
 		log.Fatal("socket: ", err)
@@ -47,6 +49,7 @@ func (t *Listener) readRAWSocket() {
 		}
 
 		packet := gopacket.NewPacket(buf[:n], layers.LayerTypeEthernet, gopacket.Default)
+		//fmt.Println("[DEBUG] packet:", packet.Dump())
 		if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
 			tcp, _ := tcpLayer.(*layers.TCP)
 
