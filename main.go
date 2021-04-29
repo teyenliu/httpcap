@@ -4,7 +4,7 @@ import (
 	_ "fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 	"github.com/cxfksword/httpcap/common"
 	"github.com/cxfksword/httpcap/config"
 )
