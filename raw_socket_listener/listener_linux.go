@@ -5,6 +5,7 @@ import (
 	_ "fmt"
 	"log"
 	"net"
+	"os"
 	_ "strconv"
 	"syscall"
 
@@ -34,10 +35,23 @@ func (t *Listener) readRAWSocket() {
 		}
 	}
 
+	var pipefile = "/tmp/pipe.ipc"
+	os.Remove(pipefile)
+	err = syscall.Mkfifo(pipefile, 0666)
+	if err != nil {
+		log.Fatal("create named pipe error:", err)
+	}
+
+	fmt.Println("start schedule writing.")
+	f, err := os.OpenFile(pipefile, os.O_RDWR, 0777)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+
+	//named pipes for IPC communication
 	var src_ip string
 	var dest_ip string
 	buf := make([]byte, 65536)
-
 	for {
 		n, _, err := syscall.Recvfrom(fd, buf, 0)
 		if err != nil {
@@ -49,6 +63,11 @@ func (t *Listener) readRAWSocket() {
 		}
 
 		packet := gopacket.NewPacket(buf[:n], layers.LayerTypeEthernet, gopacket.Default)
+
+		// send packets's byte data to named pipes
+		f.Write(packet.Data())
+		//fmt.Println("[DEBUG] packet:", packet.Dump())
+
 		//fmt.Println("[DEBUG] packet:", packet.Dump())
 		if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
 			tcp, _ := tcpLayer.(*layers.TCP)
