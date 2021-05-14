@@ -44,6 +44,7 @@ func CopyMulty(src reader.InputReader) (err error) {
 	memcache := writer.NewMemcacheOutput("")
 
 	buf := make([]byte, 5*1024*1024)
+	//fmt.Println("[DEBUG] raw packet:", buf)
 
 	for {
 		nr, raw, er := src.Read(buf)
