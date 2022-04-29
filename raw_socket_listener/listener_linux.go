@@ -18,7 +18,8 @@ func (t *Listener) readRAWSocket() {
 	// http://www.binarytides.com/packet-sniffer-code-in-c-using-linux-sockets-bsd-part-2/
 	proto := (syscall.ETH_P_ALL<<8)&0xff00 | syscall.ETH_P_ALL>>8 // change to Big-Endian order
 	fmt.Println("[DEBUG] proto: ", proto)
-	fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, proto)
+	//fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, proto)
+	fd, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_RAW, syscall.IPPROTO_UDP)
 	if err != nil {
 		log.Fatal("socket: ", err)
 	}
@@ -50,8 +51,8 @@ func (t *Listener) readRAWSocket() {
 	*/
 
 	//named pipes for IPC communication
-	var src_ip string
-	var dest_ip string
+	//var src_ip string
+	//var dest_ip string
 	buf := make([]byte, 65536)
 	for {
 		n, _, err := syscall.Recvfrom(fd, buf, 0)
@@ -63,19 +64,33 @@ func (t *Listener) readRAWSocket() {
 			continue
 		}
 
-		packet := gopacket.NewPacket(buf[:n], layers.LayerTypeEthernet, gopacket.Default)
+		//packet := gopacket.NewPacket(buf[:n], layers.LayerTypeEthernet, gopacket.Default)
+		packet := gopacket.NewPacket(buf[:n], layers.LayerTypeUDP, gopacket.Default)
+
 		//fmt.Println("[DEBUG] packet:", packet.Dump())
+		if ipLayer := packet.Layer(layers.LayerTypeIPv4); ipLayer != nil {
+			ip := ipLayer.(*layers.IPv4)
+			dst := ip.DstIP.String()
+			src := ip.SrcIP.String()
+			fmt.Printf("IP From %s to %s\n\n", src, dst)
+			if udpLayer := packet.Layer(layers.LayerTypeUDP); udpLayer != nil {
+				udp, _ := udpLayer.(*layers.UDP)
+				dst = fmt.Sprintf("%s:%d", dst, udp.DstPort)
+				src = fmt.Sprintf("%s:%d", src, udp.SrcPort)
+				fmt.Printf("UDP From %s to %s\n\n", src, dst)
+			}
+		}
 
 		// send packets's byte data to named pipes
 		//f.Write(packet.Data())
 
-		if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
-			tcp, _ := tcpLayer.(*layers.TCP)
+		//if tcpLayer := packet.Layer(layers.LayerTypeTCP); tcpLayer != nil {
+		//	tcp, _ := tcpLayer.(*layers.TCP)
 
-			src_ip = packet.NetworkLayer().NetworkFlow().Src().String()
-			dest_ip = packet.NetworkLayer().NetworkFlow().Dst().String()
+		//	src_ip = packet.NetworkLayer().NetworkFlow().Src().String()
+		//	dest_ip = packet.NetworkLayer().NetworkFlow().Dst().String()
 
-			t.parsePacket(src_ip, dest_ip, tcp)
-		}
+		//	t.parsePacket(src_ip, dest_ip, tcp)
+		//}
 	}
 }
